@@ -1,67 +1,11 @@
+# -*- coding: utf-8 -*-
 
-from msgLogInfo import color
 import os
 import xml.etree.ElementTree as ET
 from PIL import Image
 
-class bcolors:
-    HEADER    = '\033[95m'
-    MARGENTA  = '\033[35m'
-    BLUE      = '\033[34m'
-    YELLOW    = '\033[33m'
-    GREEN     = '\033[32m'
-    RED       = '\033[31m'
-    CYAN      = '\033[36m'
-    OKBLUE    = '\033[94m'
-    OKGREEN   = '\033[92m'
-    WARNING   = '\033[93m'
-    FAIL      = '\033[91m'
-    ENDC      = '\033[0m'
-    BOLD      = '\033[1m'
-    UNDERLINE = '\033[4m'
-
-class Logger(bcolors):
-
-
-    def __init__(self, mode = 'save', output_dir = ""):
-
-        self.msg_degree = {
-                'general'   :   "",
-                'notice'    :   self.HEADER + self.BOLD +self.GREEN,
-                'warning'   :   self.BOLD + self.WARNING,
-                'fail'      :   self.BOLD + self.FAIL,
-                }
-
-        self.mode = mode
-
-        if self.mode is 'save':
-            self.log = open(output_dir + 'log_convert.txt', 'w')
-
-
-    def __del__(self):
-        if self.mode is 'save':
-            self.log.close()
-
-
-    def seperate(self, degree, seperator="-"):
-        if self.mode is 'save':
-            self.log.writelines(self.msg_degree[degree] + (seperator * 65) + self.ENDC)
-        print(self.msg_degree[degree] + (seperator * 65) + self.ENDC)
-
-
-    def put(self, degree, msg):
-        if self.mode is 'save':
-            self.log.writelines(self.msg_degree[degree] + msg + self.ENDC)
-        print(self.msg_degree[degree] + msg + self.ENDC)
-
-
-def get_file_list(dir):
-    file_list = []
-    for (dirpath, dirnames, filenames) in os.walk(dir):
-        file_list.extend(filenames)
-    return file_list
-
-
+from msgLogInfo import color
+from convert2Yolo import bcolors, Logger, get_file_list
 
 def VocPascal(converter):
 
@@ -175,6 +119,9 @@ def VocPascal(converter):
             for object in objects:
 
                 cls = object.find('name').text
+
+                if (cls == "person"):
+                    cls = "pedestrian"
 
                 ##########################################
                 # Validate class candidate               #
